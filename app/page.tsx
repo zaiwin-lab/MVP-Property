@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useT } from '@/lib/i18n/context'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import AIAssistant from '@/components/sections/AIAssistant'
@@ -52,6 +55,7 @@ const apartments = [
 ]
 
 export default function HomePage() {
+  const { t } = useT()
   return (
     <>
       <Header />
@@ -113,7 +117,7 @@ export default function HomePage() {
                 className="w-1.5 h-1.5 rounded-full"
                 style={{ backgroundColor: '#c9a84c', boxShadow: '0 0 6px #c9a84c' }}
               />
-              Founding Property Partners Programme
+              {t.hero.badge}
             </div>
 
             {/* Main headline — animated gold sweep */}
@@ -127,13 +131,13 @@ export default function HomePage() {
                 textWrap: 'balance',
               }}
             >
-              <span style={{ color: '#ffffff' }}>Kuching&apos;s Finest</span>
+              <span style={{ color: '#ffffff' }}>{t.hero.line1}</span>
               <br />
               <span className="font-display heading-sweep" style={{ fontStyle: 'italic' }}>
-                Premium Apartments
+                {t.hero.line2}
               </span>
               <br />
-              <span style={{ color: '#ffffff' }}>by Trusted Partners</span>
+              <span style={{ color: '#ffffff' }}>{t.hero.line3}</span>
             </h1>
 
             <p
@@ -146,22 +150,20 @@ export default function HomePage() {
                 textWrap: 'pretty',
               }}
             >
-              Explore Riverine, SkyVilla, and Milano Eight with AI-guided
-              recommendations. Calculate affordability and book a personalised
-              viewing — all in one place.
+              {t.hero.sub}
             </p>
 
             {/* Primary CTAs */}
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="#apartments" className="btn btn-gold btn-lg">
-                Explore Apartments
+                {t.hero.cta1}
                 <ArrowRight size={17} />
               </Link>
               <Link href="#tools" className="btn btn-outline btn-lg">
-                Check Eligibility
+                {t.hero.cta2}
               </Link>
               <Link href="#appointment" className="btn btn-ghost btn-lg">
-                Book Consultation →
+                {t.hero.cta3}
               </Link>
             </div>
           </div>
@@ -199,8 +201,8 @@ export default function HomePage() {
                 className="font-display"
                 style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 600, lineHeight: 1.18, color: '#ffffff', textWrap: 'balance' }}
               >
-                Three Developments.<br />
-                <span className="text-gold-gradient">One Concierge.</span>
+                {t.apartments.heading1}<br />
+                <span className="text-gold-gradient">{t.apartments.heading2}</span>
               </h2>
               <p
                 style={{
@@ -210,8 +212,7 @@ export default function HomePage() {
                   lineHeight: 1.75,
                 }}
               >
-                Riverine, SkyVilla, and Milano Eight — each selected for lifestyle quality,
-                location strength, and investment potential.
+                {t.apartments.description}
               </p>
             </div>
 
@@ -268,7 +269,7 @@ export default function HomePage() {
                           textTransform: 'uppercase',
                         }}
                       >
-                        Editor&apos;s Choice
+                        {t.apartments.editorChoice}
                       </span>
                     </div>
 
@@ -311,14 +312,14 @@ export default function HomePage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '3px' }}>
-                            Starting from
+                            {t.apartments.startingFrom}
                           </div>
                           <div className="font-display" style={{ fontSize: '1.4rem', fontWeight: 700, color: '#c9a84c' }}>
                             {apt.priceFrom}
                           </div>
                         </div>
                         <Link href="#appointment" className="btn btn-gold btn-sm">
-                          Book Viewing
+                          {t.apartments.bookViewing}
                         </Link>
                       </div>
                     </div>
@@ -393,9 +394,9 @@ export default function HomePage() {
               className="text-center mt-10"
               style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.04em' }}
             >
-              All viewings are arranged exclusively through our Founding Property Partners.{' '}
+              {t.apartments.invitationNote}{' '}
               <Link href="#appointment" style={{ color: 'rgba(201,168,76,0.55)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
-                Book a consultation →
+                {t.apartments.invitationCta}
               </Link>
             </p>
           </div>
@@ -419,11 +420,10 @@ export default function HomePage() {
                 className="font-display mb-4"
                 style={{ fontSize: 'clamp(1.7rem, 3.5vw, 2.6rem)', fontWeight: 600, color: '#ffffff', textWrap: 'balance' }}
               >
-                See Kuching Living at Its Finest
+                {t.video.heading}
               </h2>
               <p style={{ color: 'rgba(255,255,255,0.4)', maxWidth: '440px', margin: '0 auto', lineHeight: 1.75, fontSize: '0.9rem' }}>
-                A curated walkthrough of all three developments — lifestyle, amenities,
-                and why Sarawak investors are paying attention.
+                {t.video.description}
               </p>
             </div>
 
@@ -465,10 +465,10 @@ export default function HomePage() {
                   <Play size={28} color="#050d1a" style={{ marginLeft: '3px' }} />
                 </div>
                 <p className="font-display" style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1rem', fontWeight: 500, marginBottom: '5px' }}>
-                  Property Showcase
+                  {t.video.showcase}
                 </p>
                 <p style={{ color: 'rgba(255,255,255,0.28)', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
-                  Riverine · SkyVilla · Milano Eight
+                  {t.video.subtitle}
                 </p>
               </div>
 
@@ -513,11 +513,10 @@ export default function HomePage() {
                 className="font-display mb-4"
                 style={{ fontSize: 'clamp(1.7rem, 3.5vw, 2.6rem)', fontWeight: 600, color: '#ffffff' }}
               >
-                Property Financial Toolkit
+                {t.tools.heading}
               </h2>
               <p style={{ color: 'rgba(255,255,255,0.42)', maxWidth: '420px', margin: '0 auto', lineHeight: 1.75, fontSize: '0.9rem' }}>
-                Make confident decisions with calculators built specifically
-                for Kuching property buyers and investors.
+                {t.tools.description}
               </p>
             </div>
 
@@ -525,22 +524,22 @@ export default function HomePage() {
               {[
                 {
                   icon: Home,
-                  title: 'Home Loan Eligibility',
-                  sub: 'How much can you borrow?',
+                  title: t.tools.loan.title,
+                  sub: t.tools.loan.sub,
                   component: <LoanEligibilityCalc />,
                   color: '#4a9eca',
                 },
                 {
                   icon: Calculator,
-                  title: 'Affordability Calculator',
-                  sub: 'Monthly instalment estimate',
+                  title: t.tools.afford.title,
+                  sub: t.tools.afford.sub,
                   component: <AffordabilityCalc />,
                   color: '#c9a84c',
                 },
                 {
                   icon: TrendingUp,
-                  title: 'Investment ROI',
-                  sub: 'Rental yield & 5-year returns',
+                  title: t.tools.roi.title,
+                  sub: t.tools.roi.sub,
                   component: <ROICalc />,
                   color: '#4ade80',
                 },
@@ -598,21 +597,15 @@ export default function HomePage() {
                   className="font-display mb-5"
                   style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', fontWeight: 600, color: '#ffffff', lineHeight: 1.22, textWrap: 'balance' }}
                 >
-                  Your Personal Property Guide,{' '}
-                  <span className="text-gold-gradient font-display" style={{ fontStyle: 'italic' }}>Available 24/7</span>
+                  {t.ai.heading}{' '}
+                  <span className="text-gold-gradient font-display" style={{ fontStyle: 'italic' }}>{t.ai.headingItalic}</span>
                 </h2>
                 <p style={{ color: 'rgba(255,255,255,0.46)', lineHeight: 1.78, fontSize: '0.92rem', marginBottom: '2rem' }}>
-                  Ask anything — apartment comparisons, pricing, eligibility, investment
-                  yield — and get instant, accurate answers. The AI concierge guides you
-                  from first question to booked appointment.
+                  {t.ai.description}
                 </p>
 
                 <div className="flex flex-col gap-3.5 mb-8">
-                  {[
-                    'Compare all three apartments in one conversation',
-                    'Instant answers on pricing, ROI, and loan eligibility',
-                    'Book appointments directly through the chat',
-                  ].map((feat) => (
+                  {[t.ai.feat1, t.ai.feat2, t.ai.feat3].map((feat) => (
                     <div key={feat} className="flex items-start gap-3">
                       <div
                         className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
@@ -633,7 +626,7 @@ export default function HomePage() {
                     AI
                   </div>
                   <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.28)', letterSpacing: '0.04em' }}>
-                    Tap the gold button at the bottom-right to begin
+                    {t.ai.hint}
                   </p>
                 </div>
               </div>
@@ -666,10 +659,10 @@ export default function HomePage() {
                     AI
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff' }}>Property Concierge</div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff' }}>{t.ai.concierge}</div>
                     <div style={{ fontSize: '0.65rem', color: '#4ade80', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '5px' }}>
                       <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', display: 'inline-block' }} />
-                      Online now
+                      {t.ai.online}
                     </div>
                   </div>
                   <div className="ml-auto">
@@ -685,7 +678,7 @@ export default function HomePage() {
                     style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.12)' }}
                   >
                     <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
-                      Hello! I can help you explore Riverine, SkyVilla, and Milano Eight. What brings you here today?
+                      {t.ai.chatAi1}
                     </p>
                   </div>
                   {/* User */}
@@ -694,7 +687,7 @@ export default function HomePage() {
                     style={{ background: 'rgba(201,168,76,0.14)' }}
                   >
                     <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6 }}>
-                      Looking under RM 500k with good rental yield
+                      {t.ai.chatUser}
                     </p>
                   </div>
                   {/* AI */}
@@ -703,13 +696,13 @@ export default function HomePage() {
                     style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.12)' }}
                   >
                     <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
-                      Milano Eight starts at RM 390,000 with strong rental yields — designed specifically for investors. Shall I walk you through the ROI numbers?
+                      {t.ai.chatAi2}
                     </p>
                   </div>
 
                   {/* Quick replies */}
                   <div className="flex flex-wrap gap-2 pt-1">
-                    {['Show ROI details', 'Compare apartments', 'Book a viewing'].map((r) => (
+                    {[t.ai.reply1, t.ai.reply2, t.ai.reply3].map((r) => (
                       <span
                         key={r}
                         className="px-3 py-1.5 rounded-full cursor-pointer"
@@ -752,19 +745,18 @@ export default function HomePage() {
                   className="font-display mb-5"
                   style={{ fontSize: 'clamp(1.7rem, 3.2vw, 2.4rem)', fontWeight: 600, color: '#ffffff', lineHeight: 1.25, textWrap: 'balance' }}
                 >
-                  Schedule Your<br />
-                  <span className="text-gold-gradient font-display" style={{ fontStyle: 'italic' }}>Property Viewing</span>
+                  {t.appointment.heading}<br />
+                  <span className="text-gold-gradient font-display" style={{ fontStyle: 'italic' }}>{t.appointment.headingItalic}</span>
                 </h2>
                 <p style={{ color: 'rgba(255,255,255,0.46)', lineHeight: 1.78, fontSize: '0.92rem', marginBottom: '2.5rem' }}>
-                  Meet a trusted property partner for a personalised tour. No obligation
-                  — expert guidance tailored to your goals.
+                  {t.appointment.description}
                 </p>
 
                 <div className="flex flex-col gap-5">
                   {[
-                    ['In-person or virtual', 'Choose the format that suits you'],
-                    ['Partner consultation', 'Not a generic sales pitch'],
-                    ['WhatsApp confirmation', 'Instant booking confirmation'],
+                    [t.appointment.feat1, t.appointment.feat1sub],
+                    [t.appointment.feat2, t.appointment.feat2sub],
+                    [t.appointment.feat3, t.appointment.feat3sub],
                   ].map(([title, sub]) => (
                     <div key={title} className="flex items-start gap-3.5">
                       <div
@@ -784,8 +776,7 @@ export default function HomePage() {
                 {/* Gold divider */}
                 <div className="mt-10 pt-8" style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}>
                   <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.24)', lineHeight: 1.7 }}>
-                    All consultations are conducted exclusively through our Founding Property Partners.
-                    Each partner is carefully vetted by KOBIS Berhad.
+                    {t.appointment.disclaimer}
                   </p>
                 </div>
               </div>

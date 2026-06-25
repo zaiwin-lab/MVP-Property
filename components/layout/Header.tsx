@@ -2,17 +2,31 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ChevronDown } from 'lucide-react'
+import { useT } from '@/lib/i18n/context'
+import { LOCALES, type Locale } from '@/lib/i18n/translations'
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [langOpen, setLangOpen] = useState(false)
+  const { locale, setLocale, t } = useT()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    const close = (e: MouseEvent) => {
+      if (!(e.target as Element).closest('[data-lang-menu]')) setLangOpen(false)
+    }
+    document.addEventListener('click', close)
+    return () => document.removeEventListener('click', close)
+  }, [])
+
+  const currentLocale = LOCALES.find(l => l.code === locale)!
 
   return (
     <header
@@ -23,9 +37,7 @@ export default function Header() {
         right: 0,
         zIndex: 50,
         transition: 'background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease',
-        background: scrolled
-          ? 'rgba(7, 16, 32, 0.92)'
-          : 'transparent',
+        background: scrolled ? 'rgba(7, 16, 32, 0.92)' : 'transparent',
         backdropFilter: scrolled ? 'blur(20px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
         borderBottom: scrolled ? '1px solid rgba(201,168,76,0.12)' : '1px solid transparent',
@@ -38,30 +50,14 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span
-                style={{
-                  color: '#c9a84c',
-                  fontSize: '1.2rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.2em',
-                  lineHeight: 1,
-                  textTransform: 'uppercase',
-                }}
-              >
+              <span style={{ color: '#c9a84c', fontSize: '1.2rem', fontWeight: 700, letterSpacing: '0.2em', lineHeight: 1, textTransform: 'uppercase' }}>
                 KOBIS
               </span>
               <span
-                style={{
-                  color: 'rgba(255,255,255,0.35)',
-                  fontSize: '0.55rem',
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  lineHeight: 1,
-                  marginTop: '3px',
-                }}
+                style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.55rem', letterSpacing: '0.2em', textTransform: 'uppercase', lineHeight: 1, marginTop: '3px' }}
                 className="hidden sm:block"
               >
-                Property Concierge
+                {t.footer.brandSub}
               </span>
             </div>
           </Link>
@@ -69,12 +65,12 @@ export default function Header() {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
             {[
-              { label: 'Apartments', href: '/#apartments' },
-              { label: 'Smart Tools', href: '/#tools' },
-              { label: 'Book Viewing', href: '/#appointment' },
+              { label: t.nav.apartments, href: '/#apartments' },
+              { label: t.nav.tools, href: '/#tools' },
+              { label: t.nav.bookViewing, href: '/#appointment' },
             ].map(({ label, href }) => (
               <Link
-                key={label}
+                key={href}
                 href={href}
                 style={{
                   padding: '8px 16px',
@@ -98,10 +94,87 @@ export default function Header() {
               </Link>
             ))}
 
+            {/* Language switcher */}
+            <div className="relative ml-2" data-lang-menu>
+              <button
+                onClick={(e) => { e.stopPropagation(); setLangOpen(v => !v) }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  color: 'rgba(255,255,255,0.6)',
+                  background: langOpen ? 'rgba(201,168,76,0.08)' : 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(201,168,76,0.2)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {currentLocale.short}
+                <ChevronDown size={12} style={{ transition: 'transform 0.2s', transform: langOpen ? 'rotate(180deg)' : 'none' }} />
+              </button>
+
+              {langOpen && (
+                <div
+                  data-lang-menu
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    background: 'rgba(7, 16, 32, 0.97)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(201,168,76,0.18)',
+                    borderRadius: '12px',
+                    padding: '6px',
+                    minWidth: '130px',
+                    boxShadow: '0 16px 48px rgba(0,0,0,0.6)',
+                    zIndex: 60,
+                  }}
+                >
+                  {LOCALES.map(l => (
+                    <button
+                      key={l.code}
+                      onClick={() => { setLocale(l.code as Locale); setLangOpen(false) }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        padding: '9px 12px',
+                        borderRadius: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: l.code === locale ? 700 : 400,
+                        color: l.code === locale ? '#e4c97e' : 'rgba(255,255,255,0.6)',
+                        background: l.code === locale ? 'rgba(201,168,76,0.1)' : 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease',
+                        gap: '10px',
+                      }}
+                      onMouseEnter={e => {
+                        if (l.code !== locale) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)'
+                      }}
+                      onMouseLeave={e => {
+                        if (l.code !== locale) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                      }}
+                    >
+                      <span>{l.label}</span>
+                      <span style={{ fontSize: '0.68rem', opacity: 0.5, letterSpacing: '0.05em' }}>{l.short}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <Link
               href="/login"
               style={{
-                marginLeft: '12px',
+                marginLeft: '8px',
                 padding: '9px 22px',
                 borderRadius: '8px',
                 fontSize: '0.8rem',
@@ -128,29 +201,100 @@ export default function Header() {
                 el.style.boxShadow = 'none'
               }}
             >
-              Partner Login
+              {t.nav.partnerLogin}
             </Link>
           </nav>
 
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden"
-            style={{
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '8px',
-              padding: '8px',
-              color: 'rgba(255,255,255,0.8)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Mobile right: lang + hamburger */}
+          <div className="md:hidden flex items-center gap-2">
+            {/* Mobile lang toggle */}
+            <div className="relative" data-lang-menu>
+              <button
+                onClick={(e) => { e.stopPropagation(); setLangOpen(v => !v) }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '7px 10px',
+                  borderRadius: '8px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  color: '#c9a84c',
+                  background: 'rgba(201,168,76,0.08)',
+                  border: '1px solid rgba(201,168,76,0.22)',
+                  cursor: 'pointer',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {currentLocale.short}
+                <ChevronDown size={10} style={{ transition: 'transform 0.2s', transform: langOpen ? 'rotate(180deg)' : 'none' }} />
+              </button>
+
+              {langOpen && (
+                <div
+                  data-lang-menu
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    background: 'rgba(7,16,32,0.97)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(201,168,76,0.18)',
+                    borderRadius: '12px',
+                    padding: '6px',
+                    minWidth: '130px',
+                    boxShadow: '0 16px 48px rgba(0,0,0,0.6)',
+                    zIndex: 60,
+                  }}
+                >
+                  {LOCALES.map(l => (
+                    <button
+                      key={l.code}
+                      onClick={() => { setLocale(l.code as Locale); setLangOpen(false) }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        padding: '9px 12px',
+                        borderRadius: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: l.code === locale ? 700 : 400,
+                        color: l.code === locale ? '#e4c97e' : 'rgba(255,255,255,0.6)',
+                        background: l.code === locale ? 'rgba(201,168,76,0.1)' : 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease',
+                        gap: '10px',
+                      }}
+                    >
+                      <span>{l.label}</span>
+                      <span style={{ fontSize: '0.68rem', opacity: 0.5 }}>{l.short}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '8px',
+                padding: '8px',
+                color: 'rgba(255,255,255,0.8)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -170,12 +314,12 @@ export default function Header() {
           className="md:hidden"
         >
           {[
-            { label: 'Apartments', href: '/#apartments' },
-            { label: 'Smart Tools', href: '/#tools' },
-            { label: 'Book Viewing', href: '/#appointment' },
+            { label: t.nav.apartments, href: '/#apartments' },
+            { label: t.nav.tools, href: '/#tools' },
+            { label: t.nav.bookViewing, href: '/#appointment' },
           ].map(({ label, href }) => (
             <Link
-              key={label}
+              key={href}
               href={href}
               onClick={() => setMobileOpen(false)}
               style={{
@@ -209,7 +353,7 @@ export default function Header() {
                 textDecoration: 'none',
               }}
             >
-              Partner Login
+              {t.nav.partnerLogin}
             </Link>
           </div>
         </div>

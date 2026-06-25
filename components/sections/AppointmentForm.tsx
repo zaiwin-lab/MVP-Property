@@ -5,12 +5,13 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Calendar, CheckCircle, MessageCircle } from 'lucide-react'
+import { useT } from '@/lib/i18n/context'
 
 const schema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  phone: z.string().min(8, 'Please enter a valid WhatsApp number'),
+  name: z.string().min(2),
+  phone: z.string().min(8),
   apartment: z.enum(['Riverine Residences', 'SkyVilla Kuching', 'Milano Eight', 'Not Sure Yet']),
-  preferredDate: z.string().min(1, 'Please select a date'),
+  preferredDate: z.string().min(1),
   preferredTime: z.enum(['9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM']),
   purpose: z.enum(['Own Stay', 'Investment', 'Both', 'Just Exploring']),
   message: z.string().optional(),
@@ -24,9 +25,10 @@ interface AppointmentFormProps {
 }
 
 export default function AppointmentForm({ partnerId, partnerName }: AppointmentFormProps) {
+  const { t } = useT()
+  const f = t.form
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [leadPhone, setLeadPhone] = useState('')
 
   const {
     register,
@@ -48,20 +50,10 @@ export default function AppointmentForm({ partnerId, partnerName }: AppointmentF
       const res = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          partnerId: partnerId || 'default',
-        }),
+        body: JSON.stringify({ ...data, partnerId: partnerId || 'default' }),
       })
-
-      if (res.ok) {
-        setLeadPhone(data.phone)
-        setSubmitted(true)
-        reset()
-      }
+      if (res.ok) { setSubmitted(true); reset() }
     } catch {
-      // Optimistically show success anyway for MVP
-      setLeadPhone(data.phone)
       setSubmitted(true)
     } finally {
       setSubmitting(false)
@@ -83,11 +75,8 @@ export default function AppointmentForm({ partnerId, partnerName }: AppointmentF
           <CheckCircle size={32} style={{ color: '#c9a84c' }} />
         </div>
         <div>
-          <h3 className="text-white text-xl font-semibold mb-2">Appointment Request Received!</h3>
-          <p className="text-white/60 text-sm max-w-md mx-auto">
-            Thank you! Our property partner will confirm your appointment within 24 hours. You may
-            also WhatsApp us directly for a faster response.
-          </p>
+          <h3 className="text-white text-xl font-semibold mb-2">{f.successTitle}</h3>
+          <p className="text-white/60 text-sm max-w-md mx-auto">{f.successSub}</p>
         </div>
         <a
           href={waLink}
@@ -97,84 +86,53 @@ export default function AppointmentForm({ partnerId, partnerName }: AppointmentF
           style={{ backgroundColor: '#25D366', color: '#fff' }}
         >
           <MessageCircle size={16} />
-          WhatsApp Us to Confirm
+          {f.whatsappConfirm}
         </a>
         <div>
           <button
             onClick={() => setSubmitted(false)}
             className="text-white/40 hover:text-white/60 text-sm underline underline-offset-4"
           >
-            Submit another request
+            {f.another}
           </button>
         </div>
       </div>
     )
   }
 
-  const inputClass =
-    'w-full px-4 py-3 rounded text-white text-sm outline-none transition-all'
-  const inputStyle = {
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    border: '1px solid rgba(201,168,76,0.2)',
-  }
+  const inputClass = 'w-full px-4 py-3 rounded text-white text-sm outline-none transition-all'
+  const inputStyle = { backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,168,76,0.2)' }
+  const labelClass = 'block text-white/60 text-xs tracking-widest uppercase mb-2'
   const errorClass = 'text-red-400 text-xs mt-1'
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        {/* Name */}
         <div>
-          <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-            Full Name *
-          </label>
-          <input
-            {...register('name')}
-            placeholder="Your full name"
-            className={inputClass}
-            style={inputStyle}
-          />
-          {errors.name && <p className={errorClass}>{errors.name.message}</p>}
+          <label className={labelClass}>{f.name} *</label>
+          <input {...register('name')} placeholder={f.namePlaceholder} className={inputClass} style={inputStyle} />
+          {errors.name && <p className={errorClass}>{f.nameError}</p>}
         </div>
-
-        {/* Phone */}
         <div>
-          <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-            WhatsApp Number *
-          </label>
-          <input
-            {...register('phone')}
-            placeholder="+60 11-XXXX XXXX"
-            className={inputClass}
-            style={inputStyle}
-          />
-          {errors.phone && <p className={errorClass}>{errors.phone.message}</p>}
+          <label className={labelClass}>{f.phone} *</label>
+          <input {...register('phone')} placeholder={f.phonePlaceholder} className={inputClass} style={inputStyle} />
+          {errors.phone && <p className={errorClass}>{f.phoneError}</p>}
         </div>
       </div>
 
-      {/* Apartment */}
       <div>
-        <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-          Interested Apartment
-        </label>
-        <select
-          {...register('apartment')}
-          className={inputClass}
-          style={{ ...inputStyle, cursor: 'pointer' }}
-        >
-          {['Riverine Residences', 'SkyVilla Kuching', 'Milano Eight', 'Not Sure Yet'].map((a) => (
-            <option key={a} value={a} style={{ backgroundColor: '#112240' }}>
-              {a}
-            </option>
+        <label className={labelClass}>{f.apartment}</label>
+        <select {...register('apartment')} className={inputClass} style={{ ...inputStyle, cursor: 'pointer' }}>
+          {(['Riverine Residences', 'SkyVilla Kuching', 'Milano Eight'] as const).map(a => (
+            <option key={a} value={a} style={{ backgroundColor: '#112240' }}>{a}</option>
           ))}
+          <option value="Not Sure Yet" style={{ backgroundColor: '#112240' }}>{f.notSure}</option>
         </select>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        {/* Date */}
         <div>
-          <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-            Preferred Date *
-          </label>
+          <label className={labelClass}>{f.date} *</label>
           <input
             {...register('preferredDate')}
             type="date"
@@ -182,60 +140,30 @@ export default function AppointmentForm({ partnerId, partnerName }: AppointmentF
             style={{ ...inputStyle, colorScheme: 'dark' }}
             min={new Date().toISOString().split('T')[0]}
           />
-          {errors.preferredDate && <p className={errorClass}>{errors.preferredDate.message}</p>}
+          {errors.preferredDate && <p className={errorClass}>{f.dateError}</p>}
         </div>
-
-        {/* Time */}
         <div>
-          <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-            Preferred Time
-          </label>
-          <select
-            {...register('preferredTime')}
-            className={inputClass}
-            style={{ ...inputStyle, cursor: 'pointer' }}
-          >
-            {['9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'].map(
-              (t) => (
-                <option key={t} value={t} style={{ backgroundColor: '#112240' }}>
-                  {t}
-                </option>
-              )
-            )}
+          <label className={labelClass}>{f.time}</label>
+          <select {...register('preferredTime')} className={inputClass} style={{ ...inputStyle, cursor: 'pointer' }}>
+            {['9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'].map(t => (
+              <option key={t} value={t} style={{ backgroundColor: '#112240' }}>{t}</option>
+            ))}
           </select>
         </div>
       </div>
 
-      {/* Purpose */}
       <div>
-        <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-          Purpose of Viewing
-        </label>
-        <select
-          {...register('purpose')}
-          className={inputClass}
-          style={{ ...inputStyle, cursor: 'pointer' }}
-        >
-          {['Own Stay', 'Investment', 'Both', 'Just Exploring'].map((p) => (
-            <option key={p} value={p} style={{ backgroundColor: '#112240' }}>
-              {p}
-            </option>
+        <label className={labelClass}>{f.purpose}</label>
+        <select {...register('purpose')} className={inputClass} style={{ ...inputStyle, cursor: 'pointer' }}>
+          {(['Own Stay', 'Investment', 'Both', 'Just Exploring'] as const).map((val, i) => (
+            <option key={val} value={val} style={{ backgroundColor: '#112240' }}>{f.purposes[i]}</option>
           ))}
         </select>
       </div>
 
-      {/* Message */}
       <div>
-        <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-          Additional Message (Optional)
-        </label>
-        <textarea
-          {...register('message')}
-          rows={3}
-          placeholder="Any specific questions or requirements?"
-          className={inputClass}
-          style={inputStyle}
-        />
+        <label className={labelClass}>{f.message}</label>
+        <textarea {...register('message')} rows={3} placeholder={f.messagePlaceholder} className={inputClass} style={inputStyle} />
       </div>
 
       <button
@@ -245,12 +173,10 @@ export default function AppointmentForm({ partnerId, partnerName }: AppointmentF
         style={{ backgroundColor: '#c9a84c', color: '#0a1628' }}
       >
         <Calendar size={16} />
-        {submitting ? 'Submitting…' : 'Request Appointment'}
+        {submitting ? f.submitting : f.submit}
       </button>
 
-      <p className="text-white/30 text-xs text-center">
-        Our property partner will confirm within 24 hours.
-      </p>
+      <p className="text-white/30 text-xs text-center">{f.confirmNote}</p>
     </form>
   )
 }

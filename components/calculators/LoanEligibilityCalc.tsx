@@ -2,15 +2,17 @@
 
 import { useState } from 'react'
 import { Calculator, MessageCircle, Calendar } from 'lucide-react'
+import { useT } from '@/lib/i18n/context'
 
 function pvifa(rate: number, n: number): number {
-  // Present Value Interest Factor of Annuity
   const r = rate / 12 / 100
   if (r === 0) return n
   return (1 - Math.pow(1 + r, -n)) / r
 }
 
 export default function LoanEligibilityCalc() {
+  const { t } = useT()
+  const c = t.calcLoan
   const [salary, setSalary] = useState('')
   const [commitments, setCommitments] = useState('')
   const [tenure, setTenure] = useState('35')
@@ -22,90 +24,37 @@ export default function LoanEligibilityCalc() {
 
   const calculate = () => {
     const s = parseFloat(salary) || 0
-    const c = parseFloat(commitments) || 0
-    const t = parseInt(tenure) || 35
-    const interestRate = 4.0
-
-    // DSR formula: Max monthly payment = (Salary - Commitments) * 0.7
-    const maxMonthly = (s - c) * 0.7
-    if (maxMonthly <= 0) {
-      setResult({ eligibleLoan: 0, monthlyPayment: 0, propertyBudget: 0 })
-      return
-    }
-
-    // Eligible loan = max monthly payment * PVIFA(4%, tenure years)
-    const pv = pvifa(interestRate, t * 12)
+    const cm = parseFloat(commitments) || 0
+    const ten = parseInt(tenure) || 35
+    const maxMonthly = (s - cm) * 0.7
+    if (maxMonthly <= 0) { setResult({ eligibleLoan: 0, monthlyPayment: 0, propertyBudget: 0 }); return }
+    const pv = pvifa(4.0, ten * 12)
     const eligibleLoan = Math.round(maxMonthly * pv)
-    const propertyBudget = Math.round(eligibleLoan / 0.9) // loan is 90%, buyer puts 10% down
-
-    setResult({
-      eligibleLoan,
-      monthlyPayment: Math.round(maxMonthly),
-      propertyBudget,
-    })
+    setResult({ eligibleLoan, monthlyPayment: Math.round(maxMonthly), propertyBudget: Math.round(eligibleLoan / 0.9) })
   }
 
   const fmt = (n: number) =>
-    new Intl.NumberFormat('en-MY', {
-      style: 'currency',
-      currency: 'MYR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(n)
+    new Intl.NumberFormat('en-MY', { style: 'currency', currency: 'MYR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n)
+
+  const inputClass = 'w-full px-4 py-3 rounded text-white text-sm outline-none'
+  const inputStyle = { backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(201,168,76,0.2)' }
+  const labelClass = 'block text-white/60 text-xs tracking-widest uppercase mb-2'
 
   return (
     <div className="space-y-5">
       <div>
-        <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-          Gross Monthly Salary (RM)
-        </label>
-        <input
-          type="number"
-          value={salary}
-          onChange={(e) => setSalary(e.target.value)}
-          placeholder="e.g. 5000"
-          className="w-full px-4 py-3 rounded text-white text-sm outline-none"
-          style={{
-            backgroundColor: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(201,168,76,0.2)',
-          }}
-        />
+        <label className={labelClass}>{c.salary}</label>
+        <input type="number" value={salary} onChange={e => setSalary(e.target.value)} placeholder="e.g. 5000" className={inputClass} style={inputStyle} />
       </div>
-
       <div>
-        <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-          Monthly Commitments (RM)
-        </label>
-        <input
-          type="number"
-          value={commitments}
-          onChange={(e) => setCommitments(e.target.value)}
-          placeholder="e.g. 1000"
-          className="w-full px-4 py-3 rounded text-white text-sm outline-none"
-          style={{
-            backgroundColor: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(201,168,76,0.2)',
-          }}
-        />
+        <label className={labelClass}>{c.commitments}</label>
+        <input type="number" value={commitments} onChange={e => setCommitments(e.target.value)} placeholder={c.commitmentsPlaceholder} className={inputClass} style={inputStyle} />
       </div>
-
       <div>
-        <label className="block text-white/60 text-xs tracking-widest uppercase mb-2">
-          Loan Tenure (Years)
-        </label>
-        <select
-          value={tenure}
-          onChange={(e) => setTenure(e.target.value)}
-          className="w-full px-4 py-3 rounded text-white text-sm outline-none"
-          style={{
-            backgroundColor: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(201,168,76,0.2)',
-          }}
-        >
-          {[10, 15, 20, 25, 30, 35].map((y) => (
-            <option key={y} value={y} style={{ backgroundColor: '#112240' }}>
-              {y} years
-            </option>
+        <label className={labelClass}>{c.tenure}</label>
+        <select value={tenure} onChange={e => setTenure(e.target.value)} className={inputClass} style={inputStyle}>
+          {[10, 15, 20, 25, 30, 35].map(y => (
+            <option key={y} value={y} style={{ backgroundColor: '#112240' }}>{y} {c.years}</option>
           ))}
         </select>
       </div>
@@ -116,45 +65,25 @@ export default function LoanEligibilityCalc() {
         style={{ backgroundColor: '#c9a84c', color: '#0a1628' }}
       >
         <Calculator size={16} />
-        Calculate Eligibility
+        {c.calculate}
       </button>
 
       {result && (
-        <div
-          className="rounded-lg p-5 space-y-4 mt-2"
-          style={{
-            background: 'rgba(201,168,76,0.08)',
-            border: '1px solid rgba(201,168,76,0.25)',
-          }}
-        >
-          <h4 style={{ color: '#c9a84c' }} className="text-xs font-semibold tracking-widest uppercase">
-            Your Estimated Eligibility
-          </h4>
-
+        <div className="rounded-lg p-5 space-y-4 mt-2" style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.25)' }}>
           <div className="grid grid-cols-1 gap-3">
             <div className="flex justify-between items-center">
-              <span className="text-white/60 text-sm">Eligible Loan Amount</span>
+              <span className="text-white/60 text-sm">{c.eligibleLoan}</span>
               <span className="text-white font-bold text-lg">{fmt(result.eligibleLoan)}</span>
             </div>
-            <div
-              className="h-px"
-              style={{ backgroundColor: 'rgba(201,168,76,0.15)' }}
-            />
+            <div className="h-px" style={{ backgroundColor: 'rgba(201,168,76,0.15)' }} />
             <div className="flex justify-between items-center">
-              <span className="text-white/60 text-sm">Max Monthly Payment</span>
-              <span style={{ color: '#c9a84c' }} className="font-semibold">
-                {fmt(result.monthlyPayment)}
-              </span>
+              <span className="text-white/60 text-sm">{c.monthlyPayment}</span>
+              <span style={{ color: '#c9a84c' }} className="font-semibold">{fmt(result.monthlyPayment)}</span>
             </div>
-            <div
-              className="h-px"
-              style={{ backgroundColor: 'rgba(201,168,76,0.15)' }}
-            />
+            <div className="h-px" style={{ backgroundColor: 'rgba(201,168,76,0.15)' }} />
             <div className="flex justify-between items-center">
-              <span className="text-white/60 text-sm">Property Budget (incl. 10% DP)</span>
-              <span style={{ color: '#c9a84c' }} className="font-semibold">
-                {fmt(result.propertyBudget)}
-              </span>
+              <span className="text-white/60 text-sm">{c.propertyBudget}</span>
+              <span style={{ color: '#c9a84c' }} className="font-semibold">{fmt(result.propertyBudget)}</span>
             </div>
           </div>
 
@@ -168,7 +97,7 @@ export default function LoanEligibilityCalc() {
                 style={{ backgroundColor: '#25D366', color: '#fff' }}
               >
                 <MessageCircle size={14} />
-                Talk to Partner
+                WhatsApp
               </a>
               <a
                 href="#appointment"
@@ -176,16 +105,14 @@ export default function LoanEligibilityCalc() {
                 style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#c9a84c' }}
               >
                 <Calendar size={14} />
-                Book Appointment
+                {t.form.submit}
               </a>
             </div>
           )}
         </div>
       )}
 
-      <p className="text-white/30 text-xs text-center">
-        *Estimated based on DSR formula at 4% p.a. Consult a licensed banker for accuracy.
-      </p>
+      <p className="text-white/30 text-xs text-center">{c.note}</p>
     </div>
   )
 }

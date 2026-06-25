@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import RobotMascot from "@/components/RobotMascot";
+import { LanguageProvider } from "@/lib/i18n/context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,8 +45,10 @@ export default function RootLayout({
         className="min-h-full flex flex-col"
         style={{ backgroundColor: "#0a1628", color: "#ffffff" }}
       >
-        {children}
-        <RobotMascot />
+        <LanguageProvider>
+          {children}
+          <RobotMascot />
+        </LanguageProvider>
       </body>
     </html>
   );

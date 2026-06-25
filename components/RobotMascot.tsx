@@ -2,19 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { useT } from '@/lib/i18n/context'
 
-const messages = [
-  { text: 'AI Got Your Back!', emoji: '🤖' },
-  { text: 'Ask me anything — I\'m here 24/7!', emoji: '✨' },
-  { text: 'Check your loan eligibility now!', emoji: '💰' },
-  { text: 'Your dream home is one chat away!', emoji: '🏠' },
-  { text: 'Riverine, SkyVilla or Milano Eight?', emoji: '🌟' },
-  { text: 'I\'ll help you find the perfect fit!', emoji: '🎯' },
-  { text: 'Investing in Kuching? Smart move!', emoji: '📈' },
-  { text: 'Book a viewing in under 2 minutes!', emoji: '📅' },
-]
+const EMOJIS = ['🤖', '✨', '💰', '🏠', '🌟', '🎯', '📈', '📅']
 
 export default function RobotMascot() {
+  const { t } = useT()
+  const messages = [
+    { text: t.robot.msg1, emoji: EMOJIS[0] },
+    { text: t.robot.msg2, emoji: EMOJIS[1] },
+    { text: t.robot.msg3, emoji: EMOJIS[2] },
+    { text: t.robot.msg4, emoji: EMOJIS[3] },
+    { text: t.robot.msg5, emoji: EMOJIS[4] },
+    { text: t.robot.msg6, emoji: EMOJIS[5] },
+    { text: t.robot.msg7, emoji: EMOJIS[6] },
+    { text: t.robot.msg8, emoji: EMOJIS[7] },
+  ]
+
   const [msgIndex, setMsgIndex] = useState(0)
   const [visible, setVisible] = useState(false)
   const [hovered, setHovered] = useState(false)
