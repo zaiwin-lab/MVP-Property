@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Property Concierge Platform
 
-## Getting Started
+A premium property-discovery and decision-support prototype combining curated listings, affordability guidance, investment tools, appointments and AI-assisted navigation.
 
-First, run the development server:
+## Product Purpose
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Property buyers often move between listings, financing calculations, messaging threads and appointment arrangements. This platform explores how those steps can be brought into one coherent digital concierge journey.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Core Capabilities
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- curated property and apartment discovery;
+- project highlights and location context;
+- affordability and loan-eligibility calculators;
+- return-on-investment exploration;
+- appointment and viewing journey;
+- multilingual interface foundation;
+- authenticated administration architecture;
+- AI-assisted guidance concept.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technology
 
-## Learn More
+Next.js · React · TypeScript · Tailwind CSS · Prisma · NextAuth · OpenAI integration architecture
 
-To learn more about Next.js, take a look at the following resources:
+## Live Demo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+[Open the live demo](https://mvp-property.netlify.app)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Status & Delivery Role
 
-## Deploy on Vercel
+**Status:** Functional property-concierge prototype using illustrative property information.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Product strategy, customer journey, solution architecture and delivery direction are led by **Zaiwin Kassim**, together with the **KOBIS AI Prodigy Team**, using supervised AI-assisted development.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Listings, prices and returns must be verified before commercial use. A production version requires authorised property data, regulatory review, secure authentication, privacy controls and clear financial disclaimers.
